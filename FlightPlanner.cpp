@@ -5,16 +5,20 @@
 #include "FlightPlanner.h"
 
 // variable info, statuses, errors
-bool* errorLevels = new bool[3]{true, false, false};
+bool* errorLevels = new bool[3]{false, false, false};
 
 FlightPlanner::FlightPlanner() {
     this->flightDataFile = "";
     this->itineraryFile = "";
+    this->cost = 0;
+    this->time = 0;
 }
 
 FlightPlanner::FlightPlanner(string flightDataFile, string itineraryFile) {
     this->flightDataFile = flightDataFile;
     this->itineraryFile = itineraryFile;
+    this->cost = 0;
+    this->time = 0;
 }
 
 void FlightPlanner::setFiles(string flightDataFile, string itineraryFile) {
@@ -134,20 +138,26 @@ void FlightPlanner::getFlights() {
             cout << start << ", " << end << ", " << type << endl;
 
         // get the itineraries of the given path
-        DSLinkedList<DSLinkedList<string>> itineraries = getItineraries(start, end, type);
-        //cout << itineraries;
+        while(!tempCost.isEmpty())
+            tempCost.pop();
+        while(!tempTime.isEmpty())
+            tempTime.pop();
+        getItineraries(start, end, type);
     }
 }
 
-DSLinkedList<DSLinkedList<string>> FlightPlanner::getItineraries(string start, string end, string type) {
-    // open the itinerary file
-    ifstream in(itineraryFile);
-
+void FlightPlanner::getItineraries(string start, string end, string type) {
     // linked list of linked lists to return
     DSLinkedList<DSLinkedList<string>> itineraries;
 
+    while(!stack.isEmpty())
+        stack.pop();
+
     stack.push(start);
-    cout << stack << endl;
+    int tempCost1 = 0;
+    int tempTime1 = 0;
+    tempCost.push(tempCost1);
+    tempTime.push(tempTime1);
 
     while (!stack.isEmpty()) {
         // find the city in the flights linked list
@@ -159,89 +169,41 @@ DSLinkedList<DSLinkedList<string>> FlightPlanner::getItineraries(string start, s
 
         if (curCity->isEnd()) {
             if (stack.peek() == end) {
-                cout << stack.getList() << endl;
+                if (errorLevels[1])
+                    cout << "found a path" << endl;
+                itineraries.push_back(stack.getList());
             }
 
-            curCity->resetPaths();
+            cost -= tempCost.peek();
+            time -= tempTime.peek();
 
+            tempCost.pop();
+            tempTime.pop();
+
+            curCity->resetPaths();
             stack.pop();
+            if (errorLevels[0])
+                cout << stack.getList() << ", " << cost << ", " << time <<endl;
         }
         else {
             if (!isVisited(curCity->getCur().getName())) {
                 string name = curCity->getCur().getName();
+
+                int tempCost1 = curCity->getCur().getCost();
+                tempCost.push(tempCost1);
+                int tempTime1 = curCity->getCur().getTime();
+                tempTime.push(tempTime1);
+
+                cost += tempCost.peek();
+                time += tempTime.peek();
                 stack.push(name);
+                if (errorLevels[0])
+                    cout << stack.getList() << ", " << cost << ", " << time <<endl;
             }
             curCity->movePaths();
         }
     }
-    return itineraries;
 }
-/*
-DSLinkedList<DSLinkedList<string>> FlightPlanner::getItineraries(string start, string end, string type) {
-    // open the itinerary file
-    ifstream in(itineraryFile);
-
-    // linked list of linked lists to return
-    DSLinkedList<DSLinkedList<string>> itineraries;
-
-    DSStack<string> stack;
-
-    stack.push(start);
-
-    while (!stack.isEmpty()) {
-        if (errorLevels[1])
-            cout << "check if stack top " << stack.peek() << " is destination" << endl;
-        if (stack.peek() == end) {
-            if (errorLevels[1])
-                cout << "stack top is destination" << endl;
-            DSLinkedList<string> temp = stack.getList();
-            itineraries.push_back(temp);
-            stack.pop();
-        }
-        else {
-            if (errorLevels[1])
-                cout << "stack top is not destination" << endl;
-            // find the city in the flights linked list
-            OriginCity *temp = new OriginCity(stack.peek());
-            if (!flights.contains(*temp))
-                throw std::out_of_range("city does not exist");
-            OriginCity curCity = flights.find(*temp)->data;
-            delete temp;
-
-            if (errorLevels[1])
-                cout << "for connection in stack top" << endl;
-            DSLinkedList<DestinationCity> *connection = &curCity.getPaths();
-            if (connection->getItr() == nullptr) {
-                if (errorLevels[1])
-                    cout << "no more connections" << endl;
-                connection->resetItr();
-                stack.pop();
-                continue;
-            }
-            bool exit = false;
-            while (connection->getItr() != nullptr && !exit) {
-                if (errorLevels[1])
-                    cout << "check if the connection " << connection->getItr()->data.getName() << " is on the stack" << endl;
-                if (isVisited(connection->getItr()->data.getName(), stack)) {
-                    if (errorLevels[1])
-                        cout << "connection is on the stack, continue" << endl;
-                    connection->moveItr();
-                }
-                else {
-                    if (errorLevels[1])
-                        cout << "connection is not on the stack" << endl;
-                    stack.push(connection->getItr()->data.getName());
-                    connection->moveItr();
-                    exit = true;
-                }
-            }
-            if (!exit)
-                stack.pop();
-        }
-    }
-
-    return itineraries;
-}*/
 
 bool FlightPlanner::isVisited(string city) {
     DSStack<string> tempStack;

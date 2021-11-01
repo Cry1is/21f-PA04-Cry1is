@@ -34,6 +34,14 @@ int DestinationCity::getCost() {
     return this->cost;
 }
 
+void DestinationCity::setTime(int time) {
+    this->time = time;
+}
+
+int DestinationCity::getTime() {
+    return this->time;
+}
+
 void DestinationCity::setAirline(string airline) {
     this->airline = airline;
 }
