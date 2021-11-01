@@ -14,18 +14,17 @@
  * On average, this should reduce the build time for your project on your local
  * machine.
  */
-#include "catch_setup.h"
+
+#include "FlightPlanner.h"
 
 int main(int argc, char** argv) {
     if(argc == 1) {
-        runCatchTests();
+        std::cout << "no files found" << std::endl;
+        return 1;
     }
-    else {
-        std::cout << "Hello, 2341 students!" << std::endl;
-        std::cout << "Attempting to open and write to " << argv[2] << std::endl;
-        std::ofstream o(argv[3]);
-        o << "Writing to output file." << std::endl;
-        o.close();
-    }
+    FlightPlanner f(argv[1], argv[2]);
+    f.setFlightData();
+    f.getFlights();
+
     return 0;
 }

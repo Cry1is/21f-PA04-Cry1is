@@ -10,8 +10,14 @@
  */
 
 #define CATCH_CONFIG_RUNNER
+
+int runCatchTests();
+
 #include "catch.hpp"
-#include "catch_setup.h"
+
+int main() {
+    return runCatchTests();
+}
 
 int runCatchTests()
 {

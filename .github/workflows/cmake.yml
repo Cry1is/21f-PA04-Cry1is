@@ -10,7 +10,8 @@ env:
   # setting the name of the executable used in the execute steps below.
   # THIS MUST MATCH THE NAME OF THE EXECUTABLE IN THE CMAKELISTS.TXT file's
   #   add_executable command.
-  TEST_EXE: 21f_flight_planner
+  RUN_EXE: 21f_flight_planner
+  TEST_EXE: 21f_flight_planner_test
   # the name of any input files (use relative path)
   INPUT_FILE: data/sample01-flight-data.txt data/sample01-req-flights.txt
   # the name of any output files (use relative paths)
@@ -47,7 +48,7 @@ jobs:
     - name: Execute Project
       # This step calls your program with the command line args
       working-directory: ${{github.workspace}}/build
-      run: ${{github.workspace}}/build/${{env.TEST_EXE}} ${{env.INPUT_FILE}} ${{env.OUTPUT_FILE}}
+      run: ${{github.workspace}}/build/${{env.RUN_EXE}} ${{env.INPUT_FILE}} ${{env.OUTPUT_FILE}}
 
     - name: Upload output files to GitHub so they can be reviewed
       # This step zips up the data folder and uploads it to Github for you to review.
