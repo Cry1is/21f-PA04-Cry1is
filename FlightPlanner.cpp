@@ -5,7 +5,7 @@
 #include "FlightPlanner.h"
 
 // variable info, statuses, errors
-bool* errorLevels = new bool[3]{true, true, false};
+bool* errorLevels = new bool[3]{true, false, false};
 
 FlightPlanner::FlightPlanner() {
     this->flightDataFile = "";
@@ -135,7 +135,7 @@ void FlightPlanner::getFlights() {
 
         // get the itineraries of the given path
         DSLinkedList<DSLinkedList<string>> itineraries = getItineraries(start, end, type);
-        cout << itineraries;
+        //cout << itineraries;
     }
 }
 
@@ -146,9 +146,8 @@ DSLinkedList<DSLinkedList<string>> FlightPlanner::getItineraries(string start, s
     // linked list of linked lists to return
     DSLinkedList<DSLinkedList<string>> itineraries;
 
-    DSStack<string> stack;
-
     stack.push(start);
+    cout << stack << endl;
 
     while (!stack.isEmpty()) {
         // find the city in the flights linked list
@@ -160,9 +159,7 @@ DSLinkedList<DSLinkedList<string>> FlightPlanner::getItineraries(string start, s
 
         if (curCity->isEnd()) {
             if (stack.peek() == end) {
-                DSLinkedList<string> temp = stack.getList();
-                cout << temp << endl;
-                cout << stack.getList().getTail()->data << endl;
+                cout << stack.getList() << endl;
             }
 
             curCity->resetPaths();
@@ -170,8 +167,10 @@ DSLinkedList<DSLinkedList<string>> FlightPlanner::getItineraries(string start, s
             stack.pop();
         }
         else {
-            if (!isVisited(curCity->getCur().getName(), stack))
-                stack.push(curCity->getCur().getName());
+            if (!isVisited(curCity->getCur().getName())) {
+                string name = curCity->getCur().getName();
+                stack.push(name);
+            }
             curCity->movePaths();
         }
     }
@@ -244,13 +243,24 @@ DSLinkedList<DSLinkedList<string>> FlightPlanner::getItineraries(string start, s
     return itineraries;
 }*/
 
-bool FlightPlanner::isVisited(string city, DSStack<string> stack) {
+bool FlightPlanner::isVisited(string city) {
+    DSStack<string> tempStack;
     while (!stack.isEmpty()) {
-        /*if (errorLevels[1])
-            cout << stack.peek() << endl;*/
-        if (city == stack.peek())
+        if (errorLevels[1])
+            cout << stack.peek() << endl;
+        if (city == stack.peek()) {
+            while (!tempStack.isEmpty()) {
+                stack.push(tempStack.peek());
+                tempStack.pop();
+            }
             return true;
+        }
+        tempStack.push(stack.peek());
         stack.pop();
+    }
+    while (!tempStack.isEmpty()) {
+        stack.push(tempStack.peek());
+        tempStack.pop();
     }
     return false;
 }

@@ -6,6 +6,7 @@
 #define INC_21F_FLIGHT_PLANNER_DSLINKEDLIST_H
 
 #include <ostream>
+#include <iostream>
 
 template <class T>
 struct Node {
@@ -36,17 +37,17 @@ public:
     void moveItr();
     void resetItr();
 
-    void push_back(T);
-    void push_front(T);
+    void push_back(T&);
+    void push_front(T&);
     void pop_back();
     void pop_front();
 
-    bool insertAfter(T&, T);
-    bool insertBefore(T&, T);
+    bool insertAfter(T, T&);
+    bool insertBefore(T, T&);
 
-    bool contains(T&);
-    Node<T>* find(T&);
-    bool remove(T&);
+    bool contains(T);
+    Node<T>* find(T);
+    bool remove(T);
 
     bool isEmpty();
 
@@ -86,7 +87,7 @@ void DSLinkedList<T>::resetItr() {
 }
 
 template <class T>
-void DSLinkedList<T>::push_back(T data) {
+void DSLinkedList<T>::push_back(T& data) {
     if (head == nullptr) {
         head = new Node<T>(data);
         tail = head;
@@ -100,7 +101,7 @@ void DSLinkedList<T>::push_back(T data) {
 }
 
 template <class T>
-void DSLinkedList<T>::push_front(T data) {
+void DSLinkedList<T>::push_front(T& data) {
     if (head == nullptr) {
         head = new Node<T>(data);
         tail = head;
@@ -148,7 +149,7 @@ void DSLinkedList<T>::pop_front() {
 }
 
 template <class T>
-bool DSLinkedList<T>::insertAfter(T& val, T data) {
+bool DSLinkedList<T>::insertAfter(T val, T& data) {
     Node<T>* it = find(val);
     if (it != nullptr) {
         Node<T>* temp = new Node<T>(data);
@@ -165,7 +166,7 @@ bool DSLinkedList<T>::insertAfter(T& val, T data) {
 }
 
 template <class T>
-bool DSLinkedList<T>::insertBefore(T& val, T data) {
+bool DSLinkedList<T>::insertBefore(T val, T& data) {
     Node<T>* it = find(val);
     if (it != nullptr) {
         Node<T>* temp = new Node<T>(data);
@@ -185,7 +186,7 @@ bool DSLinkedList<T>::insertBefore(T& val, T data) {
 }
 
 template <class T>
-bool DSLinkedList<T>::contains(T& val) {
+bool DSLinkedList<T>::contains(T val) {
     Node<T>* it = head;
     while (it != nullptr) {
         if (it->data == val)
@@ -196,7 +197,7 @@ bool DSLinkedList<T>::contains(T& val) {
 }
 
 template <class T>
-Node<T>* DSLinkedList<T>::find(T& val) {
+Node<T>* DSLinkedList<T>::find(T val) {
     Node<T>* it = head;
     while (it != nullptr) {
         if (it->data == val)
@@ -207,7 +208,7 @@ Node<T>* DSLinkedList<T>::find(T& val) {
 }
 
 template <class T>
-bool DSLinkedList<T>::remove(T& val) {
+bool DSLinkedList<T>::remove(T val) {
     Node<T>* it = head;
     while (it != nullptr) {
         if (it->data == val) {
