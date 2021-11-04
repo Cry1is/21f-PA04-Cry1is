@@ -16,13 +16,17 @@ private:
     DSLinkedList<T>* stack;
 public:
     DSStack();
+    DSStack(const DSStack<T>&);
+    ~DSStack();
+
+    void operator=(const DSStack<T>&);
 
     void push(T&);
     void pop();
     T& peek();
     bool isEmpty();
 
-    DSLinkedList<T>& getList();
+    DSLinkedList<T>& getList() const;
 
     friend std::ostream& operator<< <>(std::ostream&, const DSStack<T>&);
 };
@@ -30,6 +34,22 @@ public:
 template <class T>
 DSStack<T>::DSStack() {
     stack = new DSLinkedList<T>();
+}
+
+template <class T>
+DSStack<T>::DSStack(const DSStack<T>& other) {
+    this->stack =  new DSLinkedList<T>(other.getList());
+}
+
+template <class T>
+DSStack<T>::~DSStack() {
+    delete stack;
+}
+
+template <class T>
+void DSStack<T>::operator=(const DSStack<T>& other) {
+    delete stack;
+    this->stack = new DSLinkedList<T>(other.getList());
 }
 
 template <class T>
@@ -53,7 +73,7 @@ bool DSStack<T>::isEmpty() {
 }
 
 template <class T>
-DSLinkedList<T>& DSStack<T>::getList() {
+DSLinkedList<T>& DSStack<T>::getList() const {
     return *stack;
 }
 

@@ -29,6 +29,10 @@ private:
     Node<T>* head,* tail,* itr;
 public:
     DSLinkedList();
+    DSLinkedList(const DSLinkedList<T>&);
+    ~DSLinkedList();
+
+    void operator=(const DSLinkedList<T>&);
 
     Node<T>* getHead();
     Node<T>* getTail();
@@ -59,6 +63,50 @@ DSLinkedList<T>::DSLinkedList() {
     head = nullptr;
     tail = nullptr;
     itr = nullptr;
+}
+
+template <class T>
+DSLinkedList<T>::DSLinkedList(const DSLinkedList<T>& other) {
+    Node<T>* temp = other.head;
+    head = nullptr;
+    tail = nullptr;
+    itr = nullptr;
+    while (temp != nullptr) {
+        this->push_back(temp->data);
+        temp = temp->next;
+    }
+}
+
+template <class T>
+DSLinkedList<T>::~DSLinkedList() {
+    Node<T>* temp = this->head;
+    while (temp != nullptr) {
+        this->head = this->head->next;
+        delete temp;
+        temp = this->head;
+    }
+    head = nullptr;
+    tail = nullptr;
+    itr = nullptr;
+}
+
+template <class T>
+void DSLinkedList<T>::operator=(const DSLinkedList<T>& other) {
+    Node<T>* temp = this->head;
+    while (temp != nullptr) {
+        this->head = this->head->next;
+        delete temp;
+        temp = this->head;
+    }
+
+    temp = other.head;
+    head = nullptr;
+    tail = nullptr;
+    itr = nullptr;
+    while (temp != nullptr) {
+        this->push_back(temp->data);
+        temp = temp->next;
+    }
 }
 
 template <class T>

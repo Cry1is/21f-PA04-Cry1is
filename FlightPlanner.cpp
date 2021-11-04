@@ -10,15 +10,11 @@ bool* errorLevels = new bool[3]{false, false, false};
 FlightPlanner::FlightPlanner() {
     this->flightDataFile = "";
     this->itineraryFile = "";
-    this->cost = 0;
-    this->time = 0;
 }
 
 FlightPlanner::FlightPlanner(string flightDataFile, string itineraryFile) {
     this->flightDataFile = flightDataFile;
     this->itineraryFile = itineraryFile;
-    this->cost = 0;
-    this->time = 0;
 }
 
 void FlightPlanner::setFiles(string flightDataFile, string itineraryFile) {
@@ -138,79 +134,65 @@ void FlightPlanner::getFlights() {
             cout << start << ", " << end << ", " << type << endl;
 
         // get the itineraries of the given path
-        while(!tempCost.isEmpty())
-            tempCost.pop();
-        while(!tempTime.isEmpty())
-            tempTime.pop();
-        getItineraries(start, end, type);
+        DSLinkedList<DSStack<DestinationCity>> itineraries = getItineraries(start, end, type);
+        itineraries.resetItr();
+        int j = 1;
+        while (itineraries.getItr() != nullptr) {
+            cout << "Itinerary " << j << ": " << endl;
+            outputPath(itineraries.getItr()->data);
+            itineraries.moveItr();
+            j++;
+        }
     }
 }
 
-void FlightPlanner::getItineraries(string start, string end, string type) {
+DSLinkedList<DSStack<DestinationCity>> FlightPlanner::getItineraries(string start, string end, string type) {
     // linked list of linked lists to return
-    DSLinkedList<DSLinkedList<string>> itineraries;
+    DSLinkedList<DSStack<DestinationCity>> itineraries;
 
     while(!stack.isEmpty())
         stack.pop();
 
-    stack.push(start);
-    int tempCost1 = 0;
-    int tempTime1 = 0;
-    tempCost.push(tempCost1);
-    tempTime.push(tempTime1);
+    DestinationCity startCity(start, 0, 0, "");
+    stack.push(startCity);
 
     while (!stack.isEmpty()) {
         // find the city in the flights linked list
-        OriginCity *temp = new OriginCity(stack.peek());
+        OriginCity *temp = new OriginCity(stack.peek().getName());
         if (!flights.contains(*temp))
             throw std::out_of_range("city does not exist");
         OriginCity* curCity = &flights.find(*temp)->data;
         delete temp;
 
         if (curCity->isEnd()) {
-            if (stack.peek() == end) {
-                if (errorLevels[1])
+            if (stack.peek().getName() == end) {
+                if (errorLevels[0]) {
                     cout << "found a path" << endl;
-                itineraries.push_back(stack.getList());
+                    outputPath(stack);
+                }
+                itineraries.push_back(stack);
             }
-
-            cost -= tempCost.peek();
-            time -= tempTime.peek();
-
-            tempCost.pop();
-            tempTime.pop();
-
             curCity->resetPaths();
             stack.pop();
-            if (errorLevels[0])
-                cout << stack.getList() << ", " << cost << ", " << time <<endl;
+            if (errorLevels[1])
+                cout << stack << endl;
         }
         else {
-            if (!isVisited(curCity->getCur().getName())) {
-                string name = curCity->getCur().getName();
-
-                int tempCost1 = curCity->getCur().getCost();
-                tempCost.push(tempCost1);
-                int tempTime1 = curCity->getCur().getTime();
-                tempTime.push(tempTime1);
-
-                cost += tempCost.peek();
-                time += tempTime.peek();
-                stack.push(name);
-                if (errorLevels[0])
-                    cout << stack.getList() << ", " << cost << ", " << time <<endl;
+            if (!isVisited(curCity->getCur())) {
+                stack.push(curCity->getCur());
+                if (errorLevels[1])
+                    cout << stack << endl;
             }
             curCity->movePaths();
         }
     }
+    return itineraries;
 }
 
-bool FlightPlanner::isVisited(string city) {
-    DSStack<string> tempStack;
+bool FlightPlanner::isVisited(DestinationCity city) {
+    DSStack<DestinationCity> tempStack;
     while (!stack.isEmpty()) {
-        if (errorLevels[1])
-            cout << stack.peek() << endl;
-        if (city == stack.peek()) {
+        if (city.getName() == stack.peek().getName()) {
             while (!tempStack.isEmpty()) {
                 stack.push(tempStack.peek());
                 tempStack.pop();
@@ -225,4 +207,30 @@ bool FlightPlanner::isVisited(string city) {
         tempStack.pop();
     }
     return false;
+}
+
+void FlightPlanner::outputPath(DSStack<DestinationCity>& s) {
+    DSStack<DestinationCity> tempStack;
+    int count = 0, time = 0;
+    double cost = 0;
+    while (!s.isEmpty()) {
+        tempStack.push(s.peek());
+        s.pop();
+    }
+
+    string origin = tempStack.peek().getName();
+    while (!tempStack.isEmpty()) {
+        s.push(tempStack.peek());
+        tempStack.pop();
+        if (tempStack.isEmpty())
+            continue;
+        cout << origin << " -> ";
+        cout << tempStack.peek().getName() << " (";
+        cout << tempStack.peek().getAirline() << ")" << endl;
+        origin = tempStack.peek().getName();
+        count++;
+        time += tempStack.peek().getTime();
+        cost += tempStack.peek().getCost();
+    }
+    cout << "Totals for Itinerary: Time: " << time << " Cost: " << cost << endl;
 }
