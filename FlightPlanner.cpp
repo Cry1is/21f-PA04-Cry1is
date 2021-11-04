@@ -5,7 +5,7 @@
 #include "FlightPlanner.h"
 
 // statuses, warnings, errors
-bool* errorLevels = new bool[3]{true, false, false};
+bool* errorLevels = new bool[3]{false, false, false};
 
 FlightPlanner::FlightPlanner() {
     this->flightDataFile = "";
@@ -130,7 +130,7 @@ void FlightPlanner::getFlights() {
         DSStack<DestinationCity> temp = itineraries.getHead()->data;
 
         // looping through until all itineraries have been printed
-        while (!itineraries.isEmpty()) {
+        while (!itineraries.isEmpty() && j < 4) {
             out << "  Itinerary " << j << ": " << endl;
             //cout << "  Itinerary " << j << ": " << endl;
 
@@ -264,18 +264,27 @@ int* FlightPlanner::calcPath(DSStack<DestinationCity>& s) {
     // variables
     int time = 0, cost = 0;
 
+    int count = 0;
+
     // move everything from the stack to the temp stack
     while (!s.isEmpty()) {
         tempStack.push(s.peek());
         s.pop();
+        count++;
     }
 
     // loop through the temp stack, pushing back to the original stack as it goes
+    time += (count-2)*43;
+    cost += (count-2)*23;
     while (!tempStack.isEmpty()) {
         s.push(tempStack.peek());
+        string prevAirline = tempStack.peek().getAirline();
         tempStack.pop();
         if (tempStack.isEmpty())
             continue;
+
+        if (prevAirline != "" && prevAirline != tempStack.peek().getAirline())
+            time += 27;
 
         // increment time and cost by the time and cost of the destination flight
         time += tempStack.peek().getTime();
@@ -291,21 +300,31 @@ int* FlightPlanner::writePath(DSStack<DestinationCity>& s, ofstream& out) {
     // variables
     int time = 0, cost = 0;
 
+    int count = 0;
+
     // move everything from the stack to the temp stack
     while (!s.isEmpty()) {
         tempStack.push(s.peek());
         s.pop();
+        count++;
     }
 
     // name of the origin of a flight
     string origin = tempStack.peek().getName();
 
     // loop through the temp stack, pushing back to the original stack as it goes
+    int layovers = ((count-2) < 0) ? 0 : (count-2);
+    time += (count-2)*43;
+    cost += (count-2)*23;
     while (!tempStack.isEmpty()) {
         s.push(tempStack.peek());
+        string prevAirline = tempStack.peek().getAirline();
         tempStack.pop();
         if (tempStack.isEmpty())
             continue;
+
+        if (prevAirline != "" && prevAirline != tempStack.peek().getAirline())
+            time += 27;
 
         // print the name of the origin flight that was just popped,
         // and the information about the destination with time and cost
