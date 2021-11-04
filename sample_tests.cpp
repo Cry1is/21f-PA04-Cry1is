@@ -44,18 +44,10 @@ TEST_CASE("DSLinkedList", "[DSLinkedList]") {
     SECTION("Copy Constructor") {
         DSLinkedList<int> copy(super);
         DSLinkedList<int>* copyP = new DSLinkedList<int>(*superP);
-        super.resetItr();
-        copy.resetItr();
-        superP->resetItr();
-        copyP->resetItr();
-        while (super.getItr() != nullptr && copy.getItr() != nullptr && superP->getItr() != nullptr && copyP->getItr() != nullptr) {
-            REQUIRE(copy.getItr()->data == super.getItr()->data);
-            REQUIRE(copyP->getItr()->data == superP->getItr()->data);
-            super.moveItr();
-            superP->moveItr();
-            copy.moveItr();
-            copyP->moveItr();
-        }
+
+        REQUIRE(copy == super);
+        REQUIRE(*copyP == *superP);
+
         REQUIRE(copy.getHead() != super.getHead());
         REQUIRE(copy.getTail() != super.getTail());
         REQUIRE(copy.getHead()->next != nullptr);
@@ -78,18 +70,10 @@ TEST_CASE("DSLinkedList", "[DSLinkedList]") {
         REQUIRE(copyP->isEmpty());
         copy = super;
         *copyP = *superP;
-        super.resetItr();
-        superP->resetItr();
-        copy.resetItr();
-        copyP->resetItr();
-        while (super.getItr() != nullptr && copy.getItr() != nullptr && superP->getItr() != nullptr && copyP->getItr() != nullptr) {
-            REQUIRE(copy.getItr()->data == super.getItr()->data);
-            REQUIRE(copyP->getItr()->data == superP->getItr()->data);
-            super.moveItr();
-            superP->moveItr();
-            copy.moveItr();
-            copyP->moveItr();
-        }
+
+        REQUIRE(copy == super);
+        REQUIRE(*copyP == *superP);
+
         REQUIRE(copy.getHead() != super.getHead());
         REQUIRE(copy.getTail() != super.getTail());
         REQUIRE(copy.getHead()->next != nullptr);
@@ -174,6 +158,13 @@ TEST_CASE("DSLinkedList", "[DSLinkedList]") {
         REQUIRE(!super.contains(nums[10]));
     }
 
+    SECTION("Find method") {
+        REQUIRE(super.find(nums[0])->data == nums[0]);
+        REQUIRE(super.find(nums[9])->data == nums[9]);
+        REQUIRE(super.find(nums[5])->data == nums[5]);
+        REQUIRE(super.find(nums[10]) == nullptr);
+    }
+
     SECTION("Remove method") {
         super.remove(nums[0]);
         REQUIRE(super.getHead()->data == nums[1]);
@@ -186,20 +177,57 @@ TEST_CASE("DSLinkedList", "[DSLinkedList]") {
         REQUIRE(!super.contains(nums[5]));
     }
 
-    SECTION("IsEmpty method") {
-        REQUIRE(!super.isEmpty());
+    SECTION("toString method") {
+        DSLinkedList<int> temp;
+        REQUIRE(temp.toString() == "");
+        temp.push_back(nums[0]);
+        REQUIRE(temp.toString() == "0");
+        temp.push_back(nums[2]);
+        REQUIRE(temp.toString() == "0 -> 2");
     }
 }
 
 TEST_CASE("DSStack", "[DSStack]") {
     DSStack<int> super;
+    DSStack<int>* superP = new DSStack<int>();
     int* nums = new int[12]{0,1,2,3,4,5,6,7,8,9,10,11};
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++) {
         super.push(nums[i]);
+        superP->push(nums[i]);
+    }
 
     SECTION("Constructor") {
         REQUIRE(!super.isEmpty());
         REQUIRE(super.peek() == nums[9]);
+        REQUIRE(!superP->isEmpty());
+        REQUIRE(superP->peek() == nums[9]);
+    }
+
+    SECTION("Copy Constructor") {
+        DSStack<int> copy(super);
+        DSStack<int>* copyP = new DSStack<int>(*superP);
+
+        REQUIRE(copy == super);
+        REQUIRE(*copyP == *superP);
+    }
+
+    SECTION("assignment operator") {
+        DSStack<int> copy;
+        DSStack<int>* copyP = new DSStack<int>();
+
+        REQUIRE(copy.isEmpty());
+        REQUIRE(copyP->isEmpty());
+
+        copy = super;
+        *copyP = *superP;
+
+        REQUIRE(copy == super);
+        REQUIRE(*copyP == *superP);
+    }
+
+    SECTION("destructor") {
+        delete superP;
+        REQUIRE(superP->isEmpty());
     }
 
     SECTION("push method") {
@@ -207,10 +235,19 @@ TEST_CASE("DSStack", "[DSStack]") {
         REQUIRE(super.peek() == nums[10]);
     }
 
-    SECTION("pop method") {
+    SECTION("pop and peek methods") {
         super.pop();
         REQUIRE(super.peek() == nums[8]);
         super.pop();
         REQUIRE(super.peek() == nums[7]);
+    }
+
+    SECTION("toString method") {
+        DSStack<int> temp;
+        REQUIRE(temp.toString() == "");
+        temp.push(nums[0]);
+        REQUIRE(temp.toString() == "0");
+        temp.push(nums[2]);
+        REQUIRE(temp.toString() == "0 -> 2");
     }
 }

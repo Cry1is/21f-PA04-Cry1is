@@ -7,6 +7,7 @@
 
 #include <ostream>
 #include <iostream>
+#include <sstream>
 
 template <class T>
 struct Node {
@@ -33,6 +34,7 @@ public:
     ~DSLinkedList();
 
     void operator=(const DSLinkedList<T>&);
+    bool operator==(const DSLinkedList<T>&) const;
 
     Node<T>* getHead();
     Node<T>* getTail();
@@ -54,6 +56,8 @@ public:
     bool remove(T);
 
     bool isEmpty();
+
+    std::string toString();
 
     friend std::ostream& operator<< <>(std::ostream&, const DSLinkedList<T>&);
 };
@@ -107,6 +111,21 @@ void DSLinkedList<T>::operator=(const DSLinkedList<T>& other) {
         this->push_back(temp->data);
         temp = temp->next;
     }
+}
+
+template <class T>
+bool DSLinkedList<T>::operator==(const DSLinkedList<T>& other) const {
+    Node<T>* temp = this->head;
+    Node<T>* otherTemp = other.head;
+    while (temp != nullptr && otherTemp != nullptr) {
+        if (!(temp->data == otherTemp->data))
+            return false;
+        temp = temp->next;
+        otherTemp = otherTemp->next;
+    }
+    if (temp == nullptr && otherTemp == nullptr)
+        return true;
+    return false;
 }
 
 template <class T>
@@ -257,6 +276,15 @@ Node<T>* DSLinkedList<T>::find(T val) {
 
 template <class T>
 bool DSLinkedList<T>::remove(T val) {
+    if (head == nullptr)
+        return false;
+    if (head == tail) {
+        delete head;
+        head = nullptr;
+        tail = nullptr;
+        itr = nullptr;
+        return true;
+    }
     Node<T>* it = head;
     while (it != nullptr) {
         if (it->data == val) {
@@ -286,6 +314,19 @@ bool DSLinkedList<T>::remove(T val) {
 template <class T>
 bool DSLinkedList<T>::isEmpty() {
     return head == nullptr;
+}
+
+template <class T>
+std::string DSLinkedList<T>::toString() {
+    std::stringstream s;
+    Node<T>* temp = head;
+    while (temp != nullptr) {
+        s << temp->data;
+        if (temp->next != nullptr)
+            s << " -> ";
+        temp = temp->next;
+    }
+    return s.str();
 }
 
 template <class T>

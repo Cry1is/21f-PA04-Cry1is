@@ -14,23 +14,28 @@ class FlightPlanner {
 private:
     DSLinkedList<OriginCity> flights;
     DSStack<DestinationCity> stack;
-    string flightDataFile, itineraryFile;
+    string flightDataFile, itineraryFile, outputFile;
 public:
     FlightPlanner();
 
-    FlightPlanner(string, string);
+    FlightPlanner(string, string, string);
 
-    void setFiles(string, string);
+    void setFiles(string, string, string);
 
     void setFlightData();
 
     void getFlights();
 
-    DSLinkedList<DSStack<DestinationCity>> getItineraries(string, string, string);
+    DSLinkedList<DSStack<DestinationCity>> getItineraries(string, string);
 
     bool isVisited(DestinationCity);
 
-    void outputPath(DSStack<DestinationCity>&);
+    int* calcPath(DSStack<DestinationCity>&);
+    int* writePath(DSStack<DestinationCity>&, ofstream&);
+
+    void status(string, int indent = 2);
+    void warning(string, int indent = 4);
+    void error(string, int indent = 6);
 };
 
 #endif //INC_21F_FLIGHT_PLANNER_FLIGHTPLANNER_H

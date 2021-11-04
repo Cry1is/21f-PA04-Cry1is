@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
         std::cout << "no files found" << std::endl;
         return 1;
     }
-    FlightPlanner f(argv[1], argv[2]);
+    FlightPlanner f(argv[1], argv[2], argv[3]);
     f.setFlightData();
     f.getFlights();
 
