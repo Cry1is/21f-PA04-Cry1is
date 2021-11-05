@@ -240,6 +240,8 @@ TEST_CASE("DSStack", "[DSStack]") {
         REQUIRE(super.peek() == nums[8]);
         super.pop();
         REQUIRE(super.peek() == nums[7]);
+        super.pop();
+        REQUIRE(super.peek() == nums[6]);
     }
 
     SECTION("toString method") {
