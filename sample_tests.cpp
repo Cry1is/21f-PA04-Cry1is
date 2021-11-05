@@ -89,13 +89,6 @@ TEST_CASE("DSLinkedList", "[DSLinkedList]") {
         REQUIRE(copyP->getTail()->next == nullptr);
     }
 
-    SECTION("Destructor") {
-        delete superP;
-        REQUIRE(superP->isEmpty());
-        REQUIRE(superP->getItr() == nullptr);
-        REQUIRE(superP->getTail() == nullptr);
-    }
-
     SECTION("Get methods") {
         REQUIRE(super.getHead()->data == nums[0]);
         REQUIRE(super.getHead()->next->data == nums[1]);
@@ -223,11 +216,6 @@ TEST_CASE("DSStack", "[DSStack]") {
 
         REQUIRE(copy == super);
         REQUIRE(*copyP == *superP);
-    }
-
-    SECTION("destructor") {
-        delete superP;
-        REQUIRE(superP->isEmpty());
     }
 
     SECTION("push method") {
