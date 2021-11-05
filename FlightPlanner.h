@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <climits>
 #include "OriginCity.h"
 #include "DSStack.h"
 
