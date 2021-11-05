@@ -1,4 +1,4 @@
-26
+28
 Dallas Buffalo 100 20 Spirit
 Dallas Buffalo 100 30 American
 Buffalo Dallas 100 30 American
@@ -25,3 +25,5 @@ Seattle Washington 400 20 Delta
 Washington Seattle 600 30 Merica
 Washington Houston 300 20 United
 Buffalo Chicago 20 200 Spirit
+Test1 Test2 50 100 Airline1
+Test2 Test3 20 40 Airline

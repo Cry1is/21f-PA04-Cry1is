@@ -76,15 +76,23 @@ void FlightPlanner::setFlightData() {
 
         // grab the origin city from the list and add the destination city to its path
         o = &flights.find(*o)->data;
-        o->addPath(*d); status("destination city " + d->getName() + " added to " + o->getName());
+        if (!o->getPaths().contains(*d))
+            {o->addPath(*d); status("destination city " + d->getName() + " added to " + o->getName());}
         o2 = &flights.find(*o2)->data;
-        o2->addPath(*d2); status("destination city " + d2->getName() + " added to " + o2->getName());
+        if (!o2->getPaths().contains(*d2))
+            {o2->addPath(*d2); status("destination city " + d2->getName() + " added to " + o2->getName());}
 
         // delete the temporary cities if they already exist in the list
         if (temp != nullptr)
             delete temp;
         if (temp2 != nullptr)
             delete temp2;
+    }
+
+    flights.resetItr();
+    while (flights.getItr()) {
+        cout << flights.getItr()->data << ": " << flights.getItr()->data.getPaths() << endl;
+        flights.moveItr();
     }
 }
 
@@ -126,6 +134,10 @@ void FlightPlanner::getFlights() {
         // counter variable for the itinerary number
         int j = 1;
 
+        if (!itineraries.getHead()) {
+            out << "  No Itineraries Found." << endl;
+            continue;
+        }
         // assigning the initial temporary stack that might be printed
         DSStack<DestinationCity> temp = itineraries.getHead()->data;
 
