@@ -13,7 +13,7 @@ template <class T>
 struct Node {
     Node<T>* next,* prev;
     T data;
-    Node(T data) {
+    Node(T& data) {
         next = nullptr;
         prev = nullptr;
         this->data = data;
@@ -33,8 +33,10 @@ public:
     DSLinkedList(const DSLinkedList<T>&);
     ~DSLinkedList();
 
-    void operator=(const DSLinkedList<T>&);
+    DSLinkedList<T>& operator=(const DSLinkedList<T>&);
     bool operator==(const DSLinkedList<T>&) const;
+
+    void clear();
 
     Node<T>* getHead();
     Node<T>* getTail();
@@ -95,7 +97,7 @@ DSLinkedList<T>::~DSLinkedList() {
 }
 
 template <class T>
-void DSLinkedList<T>::operator=(const DSLinkedList<T>& other) {
+DSLinkedList<T>& DSLinkedList<T>::operator=(const DSLinkedList<T>& other) {
     Node<T>* temp = this->head;
     while (temp != nullptr) {
         this->head = this->head->next;
@@ -111,6 +113,7 @@ void DSLinkedList<T>::operator=(const DSLinkedList<T>& other) {
         this->push_back(temp->data);
         temp = temp->next;
     }
+    return *this;
 }
 
 template <class T>
@@ -126,6 +129,19 @@ bool DSLinkedList<T>::operator==(const DSLinkedList<T>& other) const {
     if (temp == nullptr && otherTemp == nullptr)
         return true;
     return false;
+}
+
+template <class T>
+void DSLinkedList<T>::clear() {
+    Node<T>* temp = this->head;
+    while (temp != nullptr) {
+        this->head = this->head->next;
+        delete temp;
+        temp = this->head;
+    }
+    head = nullptr;
+    tail = nullptr;
+    itr = nullptr;
 }
 
 template <class T>
@@ -161,9 +177,10 @@ void DSLinkedList<T>::push_back(T& data) {
         itr = head;
     }
     else {
-        tail->next = new Node<T>(data);
-        tail->next->prev = tail;
-        tail = tail->next;
+        Node<T>* temp = new Node<T>(data);
+        tail->next = temp;
+        temp->prev = tail;
+        tail = temp;
     }
 }
 
@@ -175,9 +192,10 @@ void DSLinkedList<T>::push_front(T& data) {
         itr = head;
     }
     else {
-        head->prev = new Node<T>(data);
-        head->prev->next = head;
-        head = head->prev;
+        Node<T>* temp = new Node<T>(data);
+        head->prev = temp;
+        temp->next = head;
+        head = temp;
         itr = head;
     }
 }

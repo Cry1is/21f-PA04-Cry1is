@@ -5,7 +5,7 @@
 #include "FlightPlanner.h"
 
 // statuses, warnings, errors
-bool* errorLevels = new bool[3]{false, false, false};
+bool errorLevels[3]{false, false, false};
 
 FlightPlanner::FlightPlanner() {
     this->flightDataFile = "";
@@ -55,67 +55,56 @@ void FlightPlanner::setFlightData() {
             warning("Some fields may be empty");
 
         // create the origin and destination cities
-        OriginCity* o = new OriginCity(origin);
-        OriginCity* o2 = new OriginCity(dest);
-        DestinationCity* d = new DestinationCity(dest, cost, time, airline);
-        DestinationCity* d2 = new DestinationCity(origin, cost, time, airline);
+        OriginCity o(origin);
+        OriginCity o2(dest);
+        DestinationCity d(dest, cost, time, airline);
+        DestinationCity d2(origin, cost, time, airline);
 
         status("Created the origin and destination cities for a flight");
 
-        OriginCity* temp = nullptr,* temp2 = nullptr;
-
         // check for the origin city in the list, if it doesn't exist, push it to the list
-        if (!flights.contains(*o))
-            {flights.push_back(*o); status("new origin city " + o->getName() + " inserted");}
+        if (!flights.contains(o))
+            {flights.push_back(o); status("new origin city " + o.getName() + " inserted");}
         else
-            {temp = o; status("origin city " + o->getName() + " exists");}
-        if (!flights.contains(*o2))
-            {flights.push_back(*o2); status("new origin city " + o2->getName() + " inserted");}
+            {status("origin city " + o.getName() + " exists");}
+        if (!flights.contains(o2))
+            {flights.push_back(o2); status("new origin city " + o2.getName() + " inserted");}
         else
-            {temp2 = o2; status("origin city " + o2->getName() + " exists");}
+            {status("origin city " + o2.getName() + " exists");}
 
         // grab the origin city from the list and add the destination city to its path
-        o = &flights.find(*o)->data;
-        if (!o->getPaths().contains(*d))
-            {o->addPath(*d); status("destination city " + d->getName() + " added to " + o->getName());}
-        o2 = &flights.find(*o2)->data;
-        if (!o2->getPaths().contains(*d2))
-            {o2->addPath(*d2); status("destination city " + d2->getName() + " added to " + o2->getName());}
-
-        // delete the temporary cities if they already exist in the list
-        if (temp != nullptr)
-            delete temp;
-        if (temp2 != nullptr)
-            delete temp2;
+        if (!flights.find(o)->data.getPaths().contains(d))
+            {flights.find(o)->data.addPath(d); status("destination city " + d.getName() + " added to " + o.getName());}
+        if (!flights.find(o2)->data.getPaths().contains(d2))
+            {flights.find(o2)->data.addPath(d2); status("destination city " + d2.getName() + " added to " + o2.getName());}
     }
-
-    flights.resetItr();
-    while (flights.getItr()) {
-        cout << flights.getItr()->data << ": " << flights.getItr()->data.getPaths() << endl;
-        flights.moveItr();
-    }
+    
+    delete[] temp;
+    in.close();
 }
 
 void FlightPlanner::getFlights() {
     // open the itinerary file
-    ifstream in(itineraryFile);
-    ofstream out(outputFile);
+    ifstream in;
+    in.open(itineraryFile);
+    ofstream out;
+    out.open(outputFile);
 
     // temporary char array to read from file
-    char* temp = new char[1024];
+    char* chars = new char[1024];
 
     // get the number of itineraries
     int count;
     in >> count;
-    in.getline(temp, 1024);
+    in.getline(chars, 1024);
 
     status("Number of itineraries: " + to_string(count));
 
     // record all of the itineraries
     for (int i = 0; i < count; i++) {
         // read a line
-        in.getline(temp, 1024);
-        stringstream s(temp);
+        in.getline(chars, 1024);
+        stringstream s(chars);
 
         // variables
         string start, end, type;
@@ -129,7 +118,8 @@ void FlightPlanner::getFlights() {
         //cout << "Flight " << i+1 << ": " << start << ", " << end << ", " << type << endl;
 
         // get the itineraries of the given start and end
-        DSLinkedList<DSStack<DestinationCity>> itineraries = getItineraries(start, end);
+        itineraries.clear();
+        getItineraries(start, end);
 
         // counter variable for the itinerary number
         int j = 1;
@@ -168,8 +158,11 @@ void FlightPlanner::getFlights() {
                 if (lessThan) {
                     status("Path is cheaper than minimum based on " + type, 4);
                     temp = itineraries.getItr()->data;
+                    delete[] min;
                     min = value;
                 }
+                else
+                    delete[] value;
                 itineraries.moveItr();
             }
 
@@ -181,18 +174,17 @@ void FlightPlanner::getFlights() {
             out << "    Totals for Itinerary " << j << ": Time: " << results[0] << " Cost: " << results[1] << endl;
             //cout << "    Totals for Itinerary " << j << ": Time: " << results[0] << " Cost: " << results[1] << endl;
             j++;
+            delete[] results;
         }
     }
 
     // close input and output files
     in.close();
     out.close();
+    delete[] chars;
 }
 
-DSLinkedList<DSStack<DestinationCity>> FlightPlanner::getItineraries(string start, string end) {
-    // linked list of linked lists to return
-    DSLinkedList<DSStack<DestinationCity>> itineraries;
-
+void FlightPlanner::getItineraries(string start, string end) {
     while(!stack.isEmpty())
         stack.pop();
 
@@ -201,13 +193,12 @@ DSLinkedList<DSStack<DestinationCity>> FlightPlanner::getItineraries(string star
 
     while (!stack.isEmpty()) {
         // find the city in the flights linked list
-        OriginCity* temp = new OriginCity(stack.peek().getName());
-        if (!flights.contains(*temp)) {
-            error("City " + temp->getName() + " does not exist");
+        OriginCity temp(stack.peek().getName());
+        if (!flights.contains(temp)) {
+            error("City " + temp.getName() + " does not exist");
             exit(1);
         }
-        OriginCity* curCity = &flights.find(*temp)->data;
-        delete temp;
+        OriginCity* curCity = &flights.find(temp)->data;
 
         status("Name of the current city being checked: " + curCity->getName());
 
@@ -239,7 +230,6 @@ DSLinkedList<DSStack<DestinationCity>> FlightPlanner::getItineraries(string star
             curCity->movePaths();
         }
     }
-    return itineraries;
 }
 
 bool FlightPlanner::isVisited(DestinationCity city) {

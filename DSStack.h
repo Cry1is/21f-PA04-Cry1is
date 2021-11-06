@@ -19,7 +19,7 @@ public:
     DSStack(const DSStack<T>&);
     ~DSStack();
 
-    void operator=(const DSStack<T>&);
+    DSStack<T>& operator=(const DSStack<T>&);
     bool operator==(const DSStack<T>&) const;
 
     void push(T&);
@@ -48,9 +48,15 @@ DSStack<T>::~DSStack() {
 }
 
 template <class T>
-void DSStack<T>::operator=(const DSStack<T>& other) {
+DSStack<T>& DSStack<T>::operator=(const DSStack<T>& other) {
     delete stack;
-    this->stack = new DSLinkedList<T>(*other.stack);
+    stack = new DSLinkedList<T>();
+    Node<T>* temp = other.stack->getHead();
+    while (temp != nullptr) {
+        this->stack->push_back(temp->data);
+        temp = temp->next;
+    }
+    return *this;
 }
 
 template <class T>

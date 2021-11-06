@@ -15,6 +15,8 @@ class FlightPlanner {
 private:
     DSLinkedList<OriginCity> flights;
     DSStack<DestinationCity> stack;
+    DSLinkedList<DSStack<DestinationCity>> itineraries;
+
     string flightDataFile, itineraryFile, outputFile;
 public:
     FlightPlanner();
@@ -27,7 +29,7 @@ public:
 
     void getFlights();
 
-    DSLinkedList<DSStack<DestinationCity>> getItineraries(string, string);
+    void getItineraries(string, string);
 
     bool isVisited(DestinationCity);
 
