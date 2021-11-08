@@ -1,0 +1,25 @@
+24
+Miami Washington 160 120 United
+Washington NewYork 40 70 United
+Denver Washington 220 240 United
+Dallas Chicago 150 110 United
+Denver Seattle 210 200 United
+Phoenix Seattle 180 65 United
+LosAngeles Seattle 80 40 United
+Seattle NewYork 310 260 Spirit
+LosAngeles Denver 110 70 Spirit
+Denver Phoenix 50 35 Spirit
+Chicago Washington 60 45 Spirit
+Minneapolis Chicago 30 40 Spirit
+Chicago NewYork 80 100 Spirit
+NewOrleans Washington 195 220 Spirit
+Miami NewOrleans 45 55 Spirit
+Dallas Phoenix 140 190 Spirit
+Denver Seattle 230 190 American
+Denver Minneapolis 140 90 American
+Denver Chicago 150 220 American
+Dallas NewYork 270 330 American
+Dallas Washington 240 300 American
+Chicago Miami 210 350 American
+Dallas Miami 180 220 American
+Dallas Denver 105 50 American

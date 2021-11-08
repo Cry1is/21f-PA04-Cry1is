@@ -1,0 +1,6 @@
+5
+LosAngeles Washington C
+NewOrleans Chicago C
+Miami NewYork T
+Seattle NewYork T
+Phoenix Minneapolis T

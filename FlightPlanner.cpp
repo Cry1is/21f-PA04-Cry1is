@@ -5,7 +5,7 @@
 #include "FlightPlanner.h"
 
 // statuses, warnings, errors
-bool errorLevels[3]{false, false, false};
+bool errorLevels[3]{true, false, false};
 
 FlightPlanner::FlightPlanner() {
     this->flightDataFile = "";
@@ -78,7 +78,7 @@ void FlightPlanner::setFlightData() {
         if (!flights.find(o2)->data.getPaths().contains(d2))
             {flights.find(o2)->data.addPath(d2); status("destination city " + d2.getName() + " added to " + o2.getName());}
     }
-    
+
     delete[] temp;
     in.close();
 }

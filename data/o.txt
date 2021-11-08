@@ -1,0 +1,25 @@
+Flight 1: Los Angeles, Washington (Cost)
+	Los Angeles -> Denver (Spirit) -> Washington (United) Time: 375 Cost: 349
+	Los Angeles -> Denver (Spirit) -> Chicago (American) -> Washington (Spirit) Time: 465 Cost: 358
+	Los Angeles -> Denver (Spirit) -> Minneapolis (American) -> Chicago (Spirit) -> Washington (Spirit) Time: 418 Cost: 397
+
+Flight 2: New Orleans, Chicago (Cost)
+	New Orleans -> Miami (Spirit) -> Chicago (American) Time: 470 Cost: 274
+	New Orleans -> Washington (Spirit) -> Chicago (Spirit) Time: 308 Cost: 274
+	New Orleans -> Miami (Spirit) -> Washington (United) -> Chicago (Spirit) Time: 350 Cost: 303
+
+Flight 3: Miami, New York (Time).
+	Miami -> Washington (United) -> New York (United) Time: 233 Cost: 219
+	Miami -> Washington (United) -> Chicago (Spirit) -> New York (Spirit) Time: 373 Cost: 338
+	Miami -> New Orleans (Spirit) -> Washington (Spirit) -> New York (United) Time: 453 Cost: 318
+
+Flight 4: Seattle, New York (Time)
+	Seattle -> New York (Spirit) Time: 260 Cost: 310
+	Seattle -> Phoenix (United) -> Denver (Spirit) -> Minneapolis (American) -> Chicago (Spirit) -> New York (Spirit) Time: 568 Cost: 556.00
+	Seattle -> Denver (American) -> Minneapolis (American) -> Chicago (Spirit) -> New York (Spirit) Time: 571 Cost: 537
+
+Flight 5: Phoenix, Minneapolis (Time)
+	Phoenix -> Denver (Spirit) -> Minneapolis (American) Time: 190 Cost: 209
+	Phoenix -> Denver (Spirit) -> Chicago (American) -> Minneapolis (Spirit) Time: 425 Cost: 268
+	Phoenix -> Denver (Spirit) -> Dallas (American) -> Chicago (United) -> Minneapolis (Spirit) Time: 430 Cost: 392
+ 
